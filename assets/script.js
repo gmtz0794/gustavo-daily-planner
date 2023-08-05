@@ -11,30 +11,48 @@ $(document).ready(function () {
     // time-block containing the button that was clicked? How might the id be
     // useful when saving the description in local storage?
 
-    function handleSaveButtonClick(event) {
+    function displaySavedData() {
+        var timeBlocks = document.querySelectorAll('.time-block');
+        var savedDataString = "";
+      
+        timeBlocks.forEach(function(timeBlock) {
+          var blockHour = timeBlock.id.split('-')[1];
+          var savedUserInput = localStorage.getItem('Hour_' + blockHour);
+      
+          if (savedUserInput) {
+
+            savedDataString += "Hour " + blockHour + ": " + savedUserInput + "<br>";
+          }
+        });
+      
+        return savedDataString;
+      }
+
+      function updateAppointmentText() {
+        var appointmentElement = document.getElementById('appointment');
+        var savedDataString = displaySavedData();
+        appointmentElement.innerHTML = savedDataString;
+      }
+
+      function handleSaveButtonClick(event) {
         var saveButton = event.target;
         var timeBlocks = saveButton.closest('.time-block');
         var blockHour = timeBlocks.id.split('-')[1];
         var userInput = timeBlocks.querySelector('.description').value;
         localStorage.setItem('Hour_' + blockHour, userInput);
+      
+        displaySavedMessage();
+      }
 
-    }
-
-    var saveButtons = document.querySelectorAll('.saveBtn');
-    saveButtons.forEach(function(saveButton) {
+      function displaySavedMessage() {
+        var appointmentElement = document.getElementById('appointment');
+        appointmentElement.textContent = "Appointment saved into LocalStorage";
+      }
+      
+      var saveButtons = document.querySelectorAll('.saveBtn');
+      saveButtons.forEach(function(saveButton) {
         saveButton.addEventListener('click', handleSaveButtonClick);
-    });
-
-    function displaySavedData() {
-        var timeBlocks = document.querySelectorAll('.time-block');
-        timeBlocks.forEach(function(timeBlock) {
-            var blockHour = timeBlock.id.split('-')[1];
-            var savedUserInput = localStorage.getItem('Hour_' + blockHour);
-            timeBlock.querySelector('.description').value = savedUserInput;
-        });
-    }
-
-    displaySavedData();
+      });
 
     // TODO: Add code to apply the past, present, or future class to each time
     // block by comparing the id to the current hour. HINTS: How can the id
